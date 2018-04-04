@@ -1,0 +1,24 @@
+/**********************************************************************************
+* Descrição: #{descricao}
+* Autor: #{autor}
+* Data Criação: #{data}
+**********************************************************************************/
+
+-----------------------------
+-- #{tabela}
+-----------------------------
+prompt "[LOG] >>>>>> Executando script de ALTER TABLE #{tabela}"
+
+DECLARE
+    COLUMN_EXISTS EXCEPTION;
+    PRAGMA EXCEPTION_INIT (COLUMN_EXISTS , -01430);
+BEGIN
+    EXECUTE IMMEDIATE 'ALTER TABLE #{alter_script}';
+    DBMS_OUTPUT.PUT_LINE('[SUCESS] A tabela #{tabela} alterada com sucesso!');
+EXCEPTION
+    WHEN COLUMN_EXISTS THEN
+        DBMS_OUTPUT.PUT_LINE('[WARN] A coluna que está sendo incluída já existe na tabela #{tabela}.');
+END;
+/
+
+prompt "[LOG] <<<<<< Fim da execucao do script de ALTER TABLE #{tabela}"
