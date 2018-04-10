@@ -5,9 +5,11 @@ import com.ora.script.jnerator.domain.KeyValue;
 import com.ora.script.jnerator.processor.ReadTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.WebRequest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,6 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 
 /**
  * @author <a href="mailto:gabriel.santos@ntconsult.com.br">gabriel.santos</a>
@@ -72,7 +76,13 @@ public class WebController {
     }
 
     @PostMapping("/generate")
-    public String generateSubmit(@ModelAttribute Field field, Model model) {
+    public String generateSubmit(WebRequest webRequest) {
+
+        Map<String, String[]> map = webRequest.getParameterMap();
+
+        map.forEach((s, strings) -> System.out.println("Chave: " + s +" - Valor:" + strings));
+
+        System.out.println("CHEGA aqui");
         return "index";
     }
 }
