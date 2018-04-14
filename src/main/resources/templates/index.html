@@ -7,24 +7,43 @@
     <script src="https://www.w3schools.com/lib/w3.js"></script>
 </head>
 <div class="container">
+    <div class="alert alert-primary" >
+        <h1>Jnerator</h1>
+    </div>
+
+    <form class="alert alert-dark" action="#" th:action="@{/}"
+          th:object="${templateOptions}" method="post" onchange="submit()">
+        <div th:object="${templateOptions}">
+            <select class="form-control" id="templateOptions" name="templateOptions">
+                <option value="">Select one template</option>
+                <option th:each="template : ${templateOptions}"
+                        th:value="${template.name}"
+                        th:selected="(${templateSelected} == ${template.name})"
+                        th:text="${template.name}"></option>
+            </select>
+        </div>
+    </form>
+
     <div class="alert alert-success" role="alert">
         <div th:each="template : ${templates}">
             <span th:text="${template}"></span>
         </div>
     </div>
 
-    <form action="#" th:action="@{/generate}" th:object="${field}" method="post">
-        <div class="form-group" th:each="field: ${field.keyValues}">
+    <form class="alert alert-dark" action="#" th:action="@{/}" th:object="${field}" method="post">
+        <div class="form-group" th:each="field: ${field?.keyValues}">
             <span th:text="${field.key}">:</span>
             <input class="form-control" type="text" th:value="${field.value}" th:name="${field.key}"/>
         </div>
 
-        <input class="btn btn-primary" type="submit" value="Submit"/>
+        <input class="btn btn-primary" type="submit" value="Generator"/>
         <input class="btn btn-secondary" type="reset" value="Reset"/>
     </form>
 
-    <div th:each="a : ${final}">
-        <span th:text="${a}"></span>
+    <div class="alert alert-success" role="alert">
+        <div th:each="a : ${final}">
+            <span th:text="${a}"></span>
+        </div>
     </div>
 </div>
 </body>
