@@ -12,26 +12,26 @@
     </div>
 
     <form class="alert alert-dark" action="#" th:action="@{/}"
-          th:object="${templateOptions}" method="post" onchange="submit()">
-        <div th:object="${templateOptions}">
+          th:object="${domain.templateOptions}" method="post" onchange="submit()">
+        <div th:object="${domain.templateOptions}">
             <select class="form-control" id="templateOptions" name="templateOptions">
                 <option value="">Select one template</option>
-                <option th:each="template : ${templateOptions}"
+                <option th:each="template : ${domain.templateOptions}"
                         th:value="${template.name}"
-                        th:selected="(${templateSelected} == ${template.name})"
+                        th:selected="(${domain.templateSelected} == ${template.name})"
                         th:text="${template.name}"></option>
             </select>
         </div>
     </form>
 
     <div class="alert alert-success" role="alert">
-        <div th:each="template : ${templates}">
+        <div th:each="template : ${domain.templates}">
             <span th:text="${template}"></span>
         </div>
     </div>
 
-    <form class="alert alert-dark" action="#" th:action="@{/}" th:object="${field}" method="post">
-        <div class="form-group" th:each="field: ${field?.keyValues}">
+    <form class="alert alert-dark" action="#" th:action="@{/}" th:object="${domain.field}" method="post">
+        <div class="form-group" th:each="field: ${domain.field?.keyValues}">
             <span th:text="${field.key}">:</span>
             <input class="form-control" type="text" th:value="${field.value}" th:name="${field.key}"/>
         </div>
@@ -41,7 +41,7 @@
     </form>
 
     <div class="alert alert-success" role="alert">
-        <div th:each="a : ${final}">
+        <div th:each="a : ${domain.generateDocument}">
             <span th:text="${a}"></span>
         </div>
     </div>
