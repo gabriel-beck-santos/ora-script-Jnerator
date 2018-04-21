@@ -5,9 +5,9 @@ import java.util.List;
 
 public enum TemplateSql {
 
-    TEMPLATE_DDL_ALTER_DEMO("TEMPLATE_DDL_ALTER_DEMO", "sql-templates/DDL/ALTER/demo.txt"),
-    TEMPLATE_DDL_DROP_DEMO("TEMPLATE_DDL_DROP_DEMO", "sql-templates/DDL/DROP/demo.txt"),
-    TEMPLATE_DDL_CREATE_DEMO("TEMPLATE_DDL_CREATE_DEMO", "sql-templates/DDL/CREATE/demo.txt");
+    TEMPLATE_DDL_ALTER_DEMO("TEMPLATE_DDL_ALTER_DEMO", "sql-templates/DDL/ALTER/TEMPLATE_DDL_ALTER.txt"),
+    TEMPLATE_DDL_DROP_DEMO("TEMPLATE_DDL_DROP_DEMO", "sql-templates/DDL/DROP/TEMPLATE_DDL_ALTER.txt"),
+    TEMPLATE_DDL_CREATE_DEMO("TEMPLATE_DDL_CREATE_DEMO", "sql-templates/DDL/CREATE/TEMPLATE_DDL_ALTER.txt");
 
     private final String name;
     private final String path;

@@ -12,14 +12,14 @@
     </div>
 
     <form class="alert alert-dark" action="#" th:action="@{/}"
-          th:object="${domain.templateOptions}" method="post" onchange="submit()">
-        <div th:object="${domain.templateOptions}">
+          th:object="${domain.templateOptionsList}" method="post" onchange="submit()">
+        <div th:object="${domain.templateOptionsList}">
             <select class="form-control" id="templateOptions" name="templateOptions">
                 <option value="">Select one template</option>
-                <option th:each="template : ${domain.templateOptions}"
-                        th:value="${template.name}"
-                        th:selected="(${domain.templateSelected} == ${template.name})"
-                        th:text="${template.name}"></option>
+                <option th:each="template : ${domain.templateOptionsList}"
+                        th:value="${template}"
+                        th:selected="(${domain.templateSelected} == ${template})"
+                        th:text="${template}"></option>
             </select>
         </div>
     </form>

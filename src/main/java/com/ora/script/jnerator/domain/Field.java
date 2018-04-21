@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author <a href="mailto:gabriel.santos@ntconsult.com.br">gabriel.santos</a>
+ * @author gabriel.santos
  * @since 04/04/2018 15:50:00
  */
 @Getter

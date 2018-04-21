@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * @author <a href="mailto:gabriel.santos@ntconsult.com.br">gabriel.santos</a>
+ * @author gabriel.santos
  * @since 04/04/2018 15:15:00
  */
 public class KeyValue<K, V> implements Map.Entry<K, V> {
