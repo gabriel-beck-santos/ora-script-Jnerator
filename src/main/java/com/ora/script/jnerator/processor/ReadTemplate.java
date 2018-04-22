@@ -46,12 +46,4 @@ public class ReadTemplate {
     return collect2;
   }
 
-//  public void generateSql(Path path, Map<String, String> variables) {
-//    List<String> collect2 = generateSqlTemplate(path, variables);
-//    try {
-//      Files.write(Paths.get("teste.sql"), collect2);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//  }
 }
