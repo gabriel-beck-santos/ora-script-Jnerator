@@ -7,7 +7,7 @@
 -----------------------------
 -- #{tabela}
 -----------------------------
-prompt "[LOG] >>>>>> Executando script de ALTER TABLE #{tabela}"
+prompt "[LOG] >>>>>> Executando script de ALTER TABLE #{esquema}.#{tabela}"
 
 DECLARE
     COLUMN_EXISTS EXCEPTION;

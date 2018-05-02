@@ -45,11 +45,12 @@ public class JneratorDomain {
   }
 
   public void loadSelectedTemplate() {
+
     Field field = new Field();
     try {
 
-      if (Objects.nonNull(this.templateSelected) && !this.templateSelected
-          .isEmpty()) {
+      if (Objects.nonNull(this.templateSelected) && !this.templateSelected.isEmpty()) {
+
         templatePath = templateOptions.entrySet().stream()
             .filter(stringStringEntry -> stringStringEntry
                 .getKey().contains(templateSelected)).findAny().get().getValue();
@@ -63,7 +64,7 @@ public class JneratorDomain {
       for (String s : collect) {
         Pattern pattern = Pattern.compile("#\\{(.*?)}");
         Matcher matcher = pattern.matcher(s);
-        if (matcher.find()) {
+        while (matcher.find()) {
           field.getKeyValues().add(new KeyValue(matcher.group(), ""));
         }
       }

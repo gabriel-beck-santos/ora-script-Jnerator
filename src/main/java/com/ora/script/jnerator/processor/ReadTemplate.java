@@ -28,6 +28,7 @@ public class ReadTemplate {
 
       for (String s : collect) {
 
+        // TODO: BUG -> somente esta substituindo o primeiro atributo.
         String finalS = s;
         Optional<Entry<String, String[]>> keyValue = variables.entrySet().stream()
             .filter(stringStringKeyValue -> finalS.contains(stringStringKeyValue.getKey()))
@@ -45,5 +46,4 @@ public class ReadTemplate {
     }
     return collect2;
   }
-
 }

@@ -145,8 +145,7 @@ public class JneratorController {
     }
 
     HttpHeaders header = new HttpHeaders();
-    header.set(HttpHeaders.CONTENT_DISPOSITION,
-        "attachment; filename=" + "OWNER_TABLE.sql");
+    header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "OWNER_TABLE.sql");
     header.setContentLength(temp.length());
 
     return new HttpEntity<>(Files.readAllBytes(temp.toPath()), header);
