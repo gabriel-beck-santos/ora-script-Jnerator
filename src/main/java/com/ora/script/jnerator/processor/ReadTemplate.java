@@ -1,16 +1,16 @@
 package com.ora.script.jnerator.processor;
 
+import org.springframework.stereotype.Controller;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.springframework.stereotype.Controller;
 
 /**
  * @author gabriel.santos
@@ -28,16 +28,17 @@ public class ReadTemplate {
 
       for (String s : collect) {
 
-        // TODO: BUG -> somente esta substituindo o primeiro atributo.
         String finalS = s;
-        Optional<Entry<String, String[]>> keyValue = variables.entrySet().stream()
-            .filter(stringStringKeyValue -> finalS.contains(stringStringKeyValue.getKey()))
-            .findAny();
 
-        if (keyValue.isPresent()) {
-          s = s.replace(keyValue.get().getKey(), keyValue.get().getValue()[0]);
+        Set<Map.Entry<String, String[]>> entries = variables.entrySet();
+
+        for (Map.Entry<String, String[]> entrie : entries){
+          if (finalS.contains(entrie.getKey())) {
+            finalS = finalS.replace(entrie.getKey(), entrie.getValue()[0]);
+          }
         }
-        collect2.add(s);
+
+        collect2.add(finalS);
       }
 
       lines.close();
