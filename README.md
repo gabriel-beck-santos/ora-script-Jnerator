@@ -1,1 +1,1 @@
-# ora-script-Jnerator
+# Oracle Script generator - Jnerator
