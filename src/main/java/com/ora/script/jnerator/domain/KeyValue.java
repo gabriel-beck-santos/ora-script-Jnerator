@@ -1,7 +1,11 @@
 package com.ora.script.jnerator.domain;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author gabriel.santos
@@ -10,10 +14,37 @@ import java.util.Objects;
 public class KeyValue<K, V> implements Map.Entry<K, V> {
     private K key;
     private V value;
+    private String title;
+    private String help;
+    private Integer size;
 
     public KeyValue(K key, V value) {
         this.key = key;
         this.value = value;
+
+        if (this.key instanceof String) {
+            splitKey();
+        }
+    }
+
+    private void splitKey() {
+        Pattern pattern = Pattern.compile("[^#{].+[^}]");
+        Matcher matcher = pattern.matcher((String) this.key);
+
+        if (matcher.find()) {
+
+            List<String> strings = Arrays.asList(matcher.group().split("@"));
+
+            title = strings.get(0);
+
+            if(strings.size() > 1){
+                help = strings.get(1);
+            }
+
+            if(strings.size() > 2){
+                size = Integer.valueOf(strings.get(2));
+            }
+        }
     }
 
     public K getKey() {
@@ -30,6 +61,30 @@ public class KeyValue<K, V> implements Map.Entry<K, V> {
 
     public V setValue(V value) {
         return this.value = value;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getHelp() {
+        return help;
+    }
+
+    public void setHelp(String help) {
+        this.help = help;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 
     @Override

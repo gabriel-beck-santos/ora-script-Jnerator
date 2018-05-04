@@ -16,5 +16,5 @@ import java.util.Set;
 @EqualsAndHashCode
 public class Field {
 
-    private Set<KeyValue<String, String>>  keyValues = new HashSet<>();
+    private Set<KeyValue<String, String>> keyValues = new HashSet<>();
 }
