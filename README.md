@@ -1,7 +1,8 @@
 # Oracle Script generator - Jnerator
 
-### TravisCI
 [![Build Status](https://travis-ci.org/alexsrosa/ora-script-Jnerator.svg?branch=master)](https://travis-ci.org/alexsrosa/ora-script-Jnerator)
+https://sonarcloud.io/api/project_badges/measure?project=alexsrosa%3Aora-script-Jnerator&metric=alert_status
+
 
 <h2>Tecnologias utilizadas:</h2>
 
