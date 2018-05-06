@@ -85,9 +85,17 @@ public class ReadTemplate {
                 }
             }
 
-            Stream<String> lines = Files.lines(Paths.get(domain.getTemplatePath()));
-            List<String> collect = lines.collect(Collectors.toList());
-            lines.close();
+            Stream<String> lines = null;
+            List<String> collect = new ArrayList<>();
+            try {
+                lines = Files.lines(Paths.get(domain.getTemplatePath()));
+                collect = lines.collect(Collectors.toList());
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+            } finally {
+                lines.close();
+            }
+
             List<String> collectFinish = new ArrayList<>();
 
             for (String s : collect) {
