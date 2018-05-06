@@ -3,18 +3,15 @@ package com.ora.script.jnerator.processor;
 import com.ora.script.jnerator.domain.Field;
 import com.ora.script.jnerator.domain.JneratorDomain;
 import com.ora.script.jnerator.domain.KeyValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -28,6 +25,8 @@ import java.util.stream.Stream;
  */
 @Component
 public class ReadTemplate {
+
+    private Logger logger = LoggerFactory.getLogger(ReadTemplate.class);
 
     /**
      * Method for generating a template in sql.
@@ -60,7 +59,7 @@ public class ReadTemplate {
 
             lines.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info("Anything to generate.");
         }
         return collect2;
     }
@@ -77,15 +76,19 @@ public class ReadTemplate {
 
             if (Objects.nonNull(domain.getTemplateSelected()) && !domain.getTemplateSelected().isEmpty()) {
 
-                domain.setTemplatePath(domain.getTemplateOptions().entrySet().stream()
+                Optional<Map.Entry<String, String>> any = domain.getTemplateOptions().entrySet().stream()
                         .filter(stringStringEntry -> stringStringEntry
-                                .getKey().contains(domain.getTemplateSelected())).findAny().get().getValue());
+                                .getKey().contains(domain.getTemplateSelected())).findAny();
+
+                if (any.isPresent()) {
+                    domain.setTemplatePath(any.get().getValue());
+                }
             }
 
             Stream<String> lines = Files.lines(Paths.get(domain.getTemplatePath()));
             List<String> collect = lines.collect(Collectors.toList());
+            lines.close();
             List<String> collectFinish = new ArrayList<>();
-
 
             for (String s : collect) {
                 Pattern pattern = Pattern.compile("#\\{(.*?)}");
@@ -114,7 +117,7 @@ public class ReadTemplate {
             domain.setGenerateDocument(collectFinish);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("Anything to read.");
         }
 
         domain.setField(field);

@@ -3,9 +3,13 @@ package com.ora.script.jnerator.domain;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -20,6 +24,7 @@ public class JneratorDomain {
     private List<String> generateDocument;
     private Map<String, String[]> mapAtributes;
     private String path;
+    private Logger logger = LoggerFactory.getLogger(JneratorDomain.class);
 
     public void setMapAtributes(Map<String, String[]> map) {
         this.mapAtributes = map;
@@ -27,13 +32,24 @@ public class JneratorDomain {
     }
 
     private void atributeTemplateOptions() {
+
         try {
             this.templateSelected = mapAtributes.get("templateOptions")[0];
-            this.path = templateOptions.entrySet().stream()
-                    .filter(stringStringEntry -> stringStringEntry
-                            .getKey().contains(templateSelected)).findAny().get().getValue();
+
         } catch (Exception e) {
+            logger.info("Template not selected.");
             this.templateSelected = "";
+        }
+
+        if (Objects.nonNull(templateOptions)){
+            Optional<Map.Entry<String, String>> any = templateOptions.entrySet()
+                    .stream()
+                    .filter(stringStringEntry -> stringStringEntry.getKey().contains(templateSelected))
+                    .findAny();
+
+            if (any.isPresent()) {
+                this.path = any.get().getValue();
+            }
         }
     }
 }
