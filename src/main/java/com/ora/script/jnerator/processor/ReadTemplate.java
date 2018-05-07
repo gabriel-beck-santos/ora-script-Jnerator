@@ -93,7 +93,9 @@ public class ReadTemplate {
             } catch (Exception e) {
                 logger.info(e.getMessage());
             } finally {
-                lines.close();
+                if (Objects.nonNull(lines)){
+                    lines.close();
+                }
             }
 
             List<String> collectFinish = new ArrayList<>();
