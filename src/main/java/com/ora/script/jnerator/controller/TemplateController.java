@@ -1,6 +1,8 @@
 package com.ora.script.jnerator.controller;
 
 import com.ora.script.jnerator.domain.JneratorDomain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,10 +29,15 @@ import java.util.Objects;
 @Controller
 public class TemplateController {
 
+    private Logger logger = LoggerFactory.getLogger(TemplateController.class);
+
     @GetMapping("/remove-template/{template}")
     public String removeTemplate(@PathVariable String template) {
         File file = new File("sql-templates/" + template);
-        file.delete();
+
+        if (!file.delete()) {
+            logger.info("Template " + template + " não removido!");
+        }
         return "redirect:/remove-template";
     }
 
@@ -68,7 +75,7 @@ public class TemplateController {
         try {
             Files.write(Paths.get(filePath), file.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info(e.getMessage());
         }
 
         return "redirect:/";

@@ -2,6 +2,8 @@ package com.ora.script.jnerator.controller;
 
 import com.ora.script.jnerator.domain.JneratorDomain;
 import com.ora.script.jnerator.processor.ReadTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -34,6 +36,7 @@ public class JneratorController {
     private final ReadTemplate readTemplate;
     private JneratorDomain jneratorDomain;
     private Map<String, String[]> parameterMap;
+    private Logger logger = LoggerFactory.getLogger(JneratorController.class);
 
     public JneratorController(ReadTemplate readTemplate) {
         this.readTemplate = readTemplate;
@@ -92,22 +95,22 @@ public class JneratorController {
     @ResponseBody
     public HttpEntity<byte[]> downloadFile() throws IOException {
 
-        File temp = null;
         try {
-            temp = File.createTempFile("OWNER_TABLE", ".sql");
+            File temp = File.createTempFile("OWNER_TABLE", ".sql");
             temp.deleteOnExit();
-            //write it
 
             Files.write(temp.toPath(), jneratorDomain.getGenerateDocument(), Charset.forName("UTF-8"));
 
+            HttpHeaders header = new HttpHeaders();
+            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "OWNER_TABLE.sql");
+            header.setContentLength(temp.length());
+
+            return new HttpEntity<>(Files.readAllBytes(temp.toPath()), header);
+
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info(e.getMessage());
         }
 
-        HttpHeaders header = new HttpHeaders();
-        header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "OWNER_TABLE.sql");
-        header.setContentLength(temp.length());
-
-        return new HttpEntity<>(Files.readAllBytes(temp.toPath()), header);
+        return null;
     }
 }
