@@ -71,65 +71,72 @@ public class ReadTemplate {
      */
     public void loadSelectedTemplate(JneratorDomain domain) {
 
-        Field field = new Field();
         try {
-
-            if (Objects.nonNull(domain.getTemplateSelected()) && !domain.getTemplateSelected().isEmpty()) {
-
-                Optional<Map.Entry<String, String>> any = domain.getTemplateOptions().entrySet().stream()
-                        .filter(stringStringEntry -> stringStringEntry
-                                .getKey().contains(domain.getTemplateSelected())).findAny();
-
-                if (any.isPresent()) {
-                    domain.setTemplatePath(any.get().getValue());
-                }
-            }
-
-            Stream<String> lines = null;
-            List<String> collect = new ArrayList<>();
-            try {
-                lines = Files.lines(Paths.get(domain.getTemplatePath()));
-                collect = lines.collect(Collectors.toList());
-            } catch (Exception e) {
-                logger.info(e.getMessage());
-            } finally {
-                if (Objects.nonNull(lines)){
-                    lines.close();
-                }
-            }
-
-            List<String> collectFinish = new ArrayList<>();
-
-            for (String s : collect) {
-                Pattern pattern = Pattern.compile("#\\{(.*?)}");
-                Matcher matcher = pattern.matcher(s);
-
-                String newString = s;
-                while (matcher.find()) {
-                    String group = matcher.group();
-
-                    field.getKeyValues().add(new KeyValue(group, ""));
-
-                    Pattern pattern2 = Pattern.compile("[^#{].+[^}]");
-                    Matcher matcher2 = pattern2.matcher(group);
-
-                    if (matcher2.find()) {
-
-                        List<String> strings = Arrays.asList(matcher2.group().split("@"));
-                        newString = newString.replace(group, "<strong style='color:red'>" + strings.get(0) +
-                                "</strong>");
-                    }
-                }
-
-                collectFinish.add(newString);
-            }
-
-            domain.setGenerateDocument(collectFinish);
+            loadTemplatePath(domain);
+            loadGenerateTemplate(domain);
 
         } catch (Exception e) {
             logger.info("Anything to read.");
         }
+    }
 
+    private void loadGenerateTemplate(JneratorDomain domain) {
+
+        Field field = new Field();
+
+        Stream<String> lines = null;
+        List<String> collect = new ArrayList<>();
+        try {
+            lines = Files.lines(Paths.get(domain.getTemplatePath()));
+            collect = lines.collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        } finally {
+            if (Objects.nonNull(lines)){
+                lines.close();
+            }
+        }
+
+        List<String> collectFinish = new ArrayList<>();
+
+        for (String s : collect) {
+            Pattern pattern = Pattern.compile("#\\{(.*?)}");
+            Matcher matcher = pattern.matcher(s);
+
+            String newString = s;
+            while (matcher.find()) {
+                String group = matcher.group();
+
+                field.getKeyValues().add(new KeyValue(group, ""));
+
+                Pattern pattern2 = Pattern.compile("[^#{].+[^}]");
+                Matcher matcher2 = pattern2.matcher(group);
+
+                if (matcher2.find()) {
+
+                    List<String> strings = Arrays.asList(matcher2.group().split("@"));
+                    newString = newString.replace(group, "<strong style='color:red'>" + strings.get(0) +
+                            "</strong>");
+                }
+            }
+
+            collectFinish.add(newString);
+        }
+
+        domain.setGenerateDocument(collectFinish);
         domain.setField(field);
+    }
+
+    private void loadTemplatePath(JneratorDomain domain) {
+        if (Objects.nonNull(domain.getTemplateSelected()) && !domain.getTemplateSelected().isEmpty()) {
+
+            Optional<Map.Entry<String, String>> any = domain.getTemplateOptions().entrySet().stream()
+                    .filter(stringStringEntry -> stringStringEntry
+                            .getKey().contains(domain.getTemplateSelected())).findAny();
+
+            if (any.isPresent()) {
+                domain.setTemplatePath(any.get().getValue());
+            }
+        }
     }
 }

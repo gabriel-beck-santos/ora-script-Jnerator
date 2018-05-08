@@ -3,29 +3,20 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Jnerator</title>
-    <link rel="stylesheet"
-            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
 </head>
 <body>
 
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Jnerator</a>
-        </div>
-        <ul class="nav navbar-nav nav-right">
-            <li><a href="/remove-template" class="pull-right">Delete Template</a></li>
-            <li><a href="/" class="pull-right">Generate SQL</a></li>
-            <li><a href="/template" class="pull-right">Upload Template</a></li>
-        </ul>
-    </div>
-</nav>
+<div th:replace="fragments/header">&nbsp;</div>
+
 <div class="container">
 
-    <form class="alert alert-info" action="#" th:action="@{/}"
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+        </ol>
+    </nav>
+
+    <form class="alert alert-primary" action="#" th:action="@{/}"
             th:object="${domain.templateOptionsList}" method="post" onchange="submit()">
         <div th:object="${domain.templateOptionsList}">
             <select class="form-control" id="templateOptions" name="templateOptions">
@@ -38,19 +29,16 @@
         </div>
     </form>
 
-    <div id="accordion" class="panel-group"
-            th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
+    <div id="accordion" class="panel-group alert-secondary" th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <button type="button" class="btn btn-info" data-toggle="collapse" data-parent="#accordion"
-                            data-target="#collapseTwo">View Generated
-                        Template
-                    </button>
-                    <a class="btn btn-primary pull-right text-white" th:href="@{/download}">Download</a>
+                    <button type="button" class="btn btn btn-outline-secondary btn-sm" data-toggle="collapse" data-parent="#accordion"
+                            data-target="#collapseTwo">View Generated Template</button>
+                    <a class="btn btn-dark float-right btn-sm" th:href="@{/download}">Download</a>
                 </h4>
             </div>
-            <div id="collapseTwo" class="panel-collapse collapse in">
+            <div id="collapseTwo" class="panel-collapse collapse show">
                 <div class="panel-body">
                     <pre>
                         <div th:each="a : ${domain.generateDocument}" th:remove="tag" th:utext="${a}"></div>
@@ -61,7 +49,7 @@
     </div>
 
     <div th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
-        <form class="alert alert-info" action="#" th:action="@{/generate}" th:object="${domain.field}"
+        <form class="alert alert-primary" action="#" th:action="@{/generate}" th:object="${domain.field}"
                 method="post">
             <div class="form-group" th:each="field: ${domain.field?.keyValues}">
 
@@ -74,8 +62,8 @@
                 </div>
             </div>
 
-            <input class="btn btn-primary" type="submit" value="Generator"/>
-            <input class="btn btn-warning" type="reset" value="Reset"/>
+            <input class="btn btn-primary btn-sm" type="submit" value="Generator"/>
+            <input class="btn btn-secondary btn-sm" type="reset" value="Reset"/>
         </form>
     </div>
 
