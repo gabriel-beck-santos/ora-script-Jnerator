@@ -16,7 +16,8 @@ public class KeyValue<K, V> implements Map.Entry<K, V> {
     private V value;
     private String title;
     private String help;
-    private Integer size;
+    private String size;
+    private String type;
 
     public KeyValue(K key, V value) {
         this.key = key;
@@ -42,7 +43,11 @@ public class KeyValue<K, V> implements Map.Entry<K, V> {
             }
 
             if(strings.size() > 2){
-                size = Integer.valueOf(strings.get(2));
+                size = strings.get(2);
+            }
+
+            if(strings.size() > 3){
+                type = strings.get(3);
             }
         }
     }
@@ -79,12 +84,20 @@ public class KeyValue<K, V> implements Map.Entry<K, V> {
         this.help = help;
     }
 
-    public Integer getSize() {
+    public String getSize() {
         return size;
     }
 
-    public void setSize(Integer size) {
+    public void setSize(String size) {
         this.size = size;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

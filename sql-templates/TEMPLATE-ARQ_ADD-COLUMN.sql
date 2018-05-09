@@ -1,7 +1,7 @@
 /**********************************************************************************
 * Descrição: Script de adição de nova coluna na #{Esquema e Tabela@Digite o esquema e a tabela. Ex.: esquema.tabela}
 * Autor: #{Autor@Digite o nome do Autor}
-* Data Criação: #{Data@Coloque a data de criação}
+* Data Criação: #{Data@Coloque a data de criação@@date}
 **********************************************************************************/
 
 -----------------------------

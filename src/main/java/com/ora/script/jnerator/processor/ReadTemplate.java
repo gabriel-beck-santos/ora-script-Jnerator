@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 public class ReadTemplate {
 
     private Logger logger = LoggerFactory.getLogger(ReadTemplate.class);
+    private String styleHtml = "<strong style='color:blue;background-color: #FFFF00;'>$$</strong>";
 
     /**
      * Method for generating a template in sql.
@@ -115,8 +116,7 @@ public class ReadTemplate {
                 if (matcher2.find()) {
 
                     List<String> strings = Arrays.asList(matcher2.group().split("@"));
-                    newString = newString.replace(group, "<strong style='color:red'>" + strings.get(0) +
-                            "</strong>");
+                    newString = newString.replace(group, styleHtml.replace("$$", strings.get(0)));
                 }
             }
 

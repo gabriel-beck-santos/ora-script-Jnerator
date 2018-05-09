@@ -3,23 +3,19 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Jnerator</title>
+
+    <link href="/bootstrap/css/others/index-template.css" rel="stylesheet"/>
 </head>
 <body>
 
 <div th:replace="fragments/header">&nbsp;</div>
 
-<div class="container">
-
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-        </ol>
-    </nav>
+<div class="container-fluid">
 
     <form class="alert alert-primary" action="#" th:action="@{/}"
             th:object="${domain.templateOptionsList}" method="post" onchange="submit()">
         <div th:object="${domain.templateOptionsList}">
-            <select class="form-control" id="templateOptions" name="templateOptions">
+            <select class="form-control form-control-sm" id="templateOptions" name="templateOptions">
                 <option value="">Select one template</option>
                 <option th:each="template : ${domain.templateOptionsList}"
                         th:value="${template}"
@@ -29,42 +25,49 @@
         </div>
     </form>
 
-    <div id="accordion" class="panel-group alert-secondary" th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <button type="button" class="btn btn btn-outline-secondary btn-sm" data-toggle="collapse" data-parent="#accordion"
-                            data-target="#collapseTwo">View Generated Template</button>
-                    <a class="btn btn-dark float-right btn-sm" th:href="@{/download}">Download</a>
-                </h4>
-            </div>
-            <div id="collapseTwo" class="panel-collapse collapse show">
-                <div class="panel-body">
-                    <pre>
-                        <div th:each="a : ${domain.generateDocument}" th:remove="tag" th:utext="${a}"></div>
-                    </pre>
-                </div>
+    <div class="row">
+        <div class="col-sm-5">
+
+            <div th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
+                <form action="#" th:action="@{/generate}" th:object="${domain.field}"
+                        method="post">
+                    <div class="alert alert-primary">
+                        <input class="btn btn-primary btn-sm" type="submit" value="Generator"/>
+                        <input class="btn btn-secondary btn-sm" type="reset" value="Reset"/>
+                        <a class="btn btn-dark float-right btn-sm" th:href="@{/download}">Download</a>
+                    </div>
+
+                    <div class="alert alert-primary">
+                        <div class="form-group" th:each="field: ${domain.field?.keyValues}">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <span th:for="${field.key}" th:text="${field.title}">:</span>
+                                    <input class="form-control form-control-sm"
+                                            th:type="${field.type}" th:value="${field.value}" th:name="${field.key}"
+                                            th:id="${field.key}" th:maxlength='${field.size}'
+                                            th:placeholder="${field.help}" th:required="required"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
             </div>
         </div>
-    </div>
-
-    <div th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
-        <form class="alert alert-primary" action="#" th:action="@{/generate}" th:object="${domain.field}"
-                method="post">
-            <div class="form-group" th:each="field: ${domain.field?.keyValues}">
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <span th:text="${field.title}">:</span>
-                        <input class="form-control" type="text" th:value="${field.value}" th:name="${field.key}"
-                                th:maxlength='${field.size}' th:placeholder="${field.help}" th:required="required"/>
+        <div class="col-sm-7">
+            <div class="panel-group" th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
+                <div class="panel panel-default alert alert-secondary">
+                    <div class="panel-body">
+                            <pre>
+                               <div class="pre-custom">
+                                   <div th:each="a : ${domain.generateDocument}" th:remove="tag" th:utext="${a}"></div>
+                               </div>
+                            </pre>
                     </div>
                 </div>
             </div>
-
-            <input class="btn btn-primary btn-sm" type="submit" value="Generator"/>
-            <input class="btn btn-secondary btn-sm" type="reset" value="Reset"/>
-        </form>
+        </div>
     </div>
 
 </div>

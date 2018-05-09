@@ -47,6 +47,8 @@ public class JneratorController {
     @RequestMapping("/")
     public ModelAndView index(WebRequest webRequest) {
 
+        jneratorDomain = new JneratorDomain();
+
         methodDefault(webRequest);
 
         ModelAndView mv = new ModelAndView("index");
