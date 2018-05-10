@@ -63,10 +63,13 @@ public class JneratorController {
 
         ModelAndView mv = new ModelAndView("index");
 
-        String path = jneratorDomain.getTemplatePath();
-        jneratorDomain
-                .setGenerateDocument(
-                        readTemplate.generateSqlTemplate(Paths.get(path), jneratorDomain.getMapAtributes()));
+        try{
+            String path = jneratorDomain.getTemplatePath();
+            jneratorDomain.setGenerateDocument(
+                    readTemplate.generateSqlTemplate(Paths.get(path), jneratorDomain));
+        }catch (Exception e){
+            logger.info(e.getMessage());
+        }
 
         mv.addObject("domain", jneratorDomain);
         return mv;

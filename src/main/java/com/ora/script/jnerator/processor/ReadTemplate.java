@@ -33,11 +33,14 @@ public class ReadTemplate {
      * Method for generating a template in sql.
      *
      * @param path      path receives a parameter containing a PATH.
-     * @param atributes receives an attribute map.
+     * @param domain    receives an attribute.
      * @return the list of string.
      */
-    public List<String> generateSqlTemplate(Path path, Map<String, String[]> atributes) {
+    public List<String> generateSqlTemplate(Path path, JneratorDomain domain) {
+
+        Map<String, String[]> atributes = domain.getMapAtributes();
         List<String> collect2 = new ArrayList<>();
+
         try {
 
             Stream<String> lines = Files.lines(path);
@@ -52,6 +55,12 @@ public class ReadTemplate {
                 for (Map.Entry<String, String[]> entrie : entries) {
                     if (finalS.contains(entrie.getKey())) {
                         finalS = finalS.replace(entrie.getKey(), entrie.getValue()[0]);
+
+                        domain.getField().getKeyValues().stream().forEach(key -> {
+                            if (key.getKey().equals(entrie.getKey())){
+                                key.setValue(entrie.getValue()[0]);
+                            }
+                        });
                     }
                 }
 

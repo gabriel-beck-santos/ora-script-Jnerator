@@ -37,8 +37,7 @@ public class JneratorDomain {
             this.templateSelected = mapAtributes.get("templateOptions")[0];
 
         } catch (Exception e) {
-            logger.info("Template not selected.");
-            this.templateSelected = "";
+            logger.info("Template is " + this.templateSelected);
         }
 
         if (Objects.nonNull(templateOptions)){
