@@ -38,14 +38,14 @@ public class TemplateController {
         if (!file.delete()) {
             logger.info("Template " + template + " não removido!");
         }
-        return "redirect:/remove-template";
+        return "redirect:/list-template";
     }
 
-    @GetMapping("/remove-template")
+    @GetMapping("/list-template")
     public ModelAndView removeTemplate() {
 
         JneratorDomain domain = new JneratorDomain();
-        ModelAndView modelAndView = new ModelAndView("remove-template");
+        ModelAndView modelAndView = new ModelAndView("template/list-template");
         File[] files = new File("sql-templates").listFiles();
 
         Map<String, String> templates = new HashMap<>();
@@ -63,7 +63,7 @@ public class TemplateController {
 
     @GetMapping("/template")
     public ModelAndView templateUpload() {
-        return new ModelAndView("template");
+        return new ModelAndView("template/template");
     }
 
     @PostMapping("/template")
@@ -78,6 +78,6 @@ public class TemplateController {
             logger.info(e.getMessage());
         }
 
-        return "redirect:/";
+        return "redirect:/list-template/";
     }
 }

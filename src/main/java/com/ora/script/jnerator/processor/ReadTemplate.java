@@ -27,16 +27,20 @@ import java.util.stream.Stream;
 public class ReadTemplate {
 
     private Logger logger = LoggerFactory.getLogger(ReadTemplate.class);
+    private String styleHtml = "<strong style='color:blue;background-color: #FFFF00;'>$$</strong>";
 
     /**
      * Method for generating a template in sql.
      *
      * @param path      path receives a parameter containing a PATH.
-     * @param atributes receives an attribute map.
+     * @param domain    receives an attribute.
      * @return the list of string.
      */
-    public List<String> generateSqlTemplate(Path path, Map<String, String[]> atributes) {
+    public List<String> generateSqlTemplate(Path path, JneratorDomain domain) {
+
+        Map<String, String[]> atributes = domain.getMapAtributes();
         List<String> collect2 = new ArrayList<>();
+
         try {
 
             Stream<String> lines = Files.lines(path);
@@ -51,6 +55,12 @@ public class ReadTemplate {
                 for (Map.Entry<String, String[]> entrie : entries) {
                     if (finalS.contains(entrie.getKey())) {
                         finalS = finalS.replace(entrie.getKey(), entrie.getValue()[0]);
+
+                        domain.getField().getKeyValues().stream().forEach(key -> {
+                            if (key.getKey().equals(entrie.getKey())){
+                                key.setValue(entrie.getValue()[0]);
+                            }
+                        });
                     }
                 }
 
@@ -71,65 +81,71 @@ public class ReadTemplate {
      */
     public void loadSelectedTemplate(JneratorDomain domain) {
 
-        Field field = new Field();
         try {
-
-            if (Objects.nonNull(domain.getTemplateSelected()) && !domain.getTemplateSelected().isEmpty()) {
-
-                Optional<Map.Entry<String, String>> any = domain.getTemplateOptions().entrySet().stream()
-                        .filter(stringStringEntry -> stringStringEntry
-                                .getKey().contains(domain.getTemplateSelected())).findAny();
-
-                if (any.isPresent()) {
-                    domain.setTemplatePath(any.get().getValue());
-                }
-            }
-
-            Stream<String> lines = null;
-            List<String> collect = new ArrayList<>();
-            try {
-                lines = Files.lines(Paths.get(domain.getTemplatePath()));
-                collect = lines.collect(Collectors.toList());
-            } catch (Exception e) {
-                logger.info(e.getMessage());
-            } finally {
-                if (Objects.nonNull(lines)){
-                    lines.close();
-                }
-            }
-
-            List<String> collectFinish = new ArrayList<>();
-
-            for (String s : collect) {
-                Pattern pattern = Pattern.compile("#\\{(.*?)}");
-                Matcher matcher = pattern.matcher(s);
-
-                String newString = s;
-                while (matcher.find()) {
-                    String group = matcher.group();
-
-                    field.getKeyValues().add(new KeyValue(group, ""));
-
-                    Pattern pattern2 = Pattern.compile("[^#{].+[^}]");
-                    Matcher matcher2 = pattern2.matcher(group);
-
-                    if (matcher2.find()) {
-
-                        List<String> strings = Arrays.asList(matcher2.group().split("@"));
-                        newString = newString.replace(group, "<strong style='color:red'>" + strings.get(0) +
-                                "</strong>");
-                    }
-                }
-
-                collectFinish.add(newString);
-            }
-
-            domain.setGenerateDocument(collectFinish);
+            loadTemplatePath(domain);
+            loadGenerateTemplate(domain);
 
         } catch (Exception e) {
             logger.info("Anything to read.");
         }
+    }
 
+    private void loadGenerateTemplate(JneratorDomain domain) {
+
+        Field field = new Field();
+
+        Stream<String> lines = null;
+        List<String> collect = new ArrayList<>();
+        try {
+            lines = Files.lines(Paths.get(domain.getTemplatePath()));
+            collect = lines.collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        } finally {
+            if (Objects.nonNull(lines)){
+                lines.close();
+            }
+        }
+
+        List<String> collectFinish = new ArrayList<>();
+
+        for (String s : collect) {
+            Pattern pattern = Pattern.compile("#\\{(.*?)}");
+            Matcher matcher = pattern.matcher(s);
+
+            String newString = s;
+            while (matcher.find()) {
+                String group = matcher.group();
+
+                field.getKeyValues().add(new KeyValue(group, ""));
+
+                Pattern pattern2 = Pattern.compile("[^#{].+[^}]");
+                Matcher matcher2 = pattern2.matcher(group);
+
+                if (matcher2.find()) {
+
+                    List<String> strings = Arrays.asList(matcher2.group().split("@"));
+                    newString = newString.replace(group, styleHtml.replace("$$", strings.get(0)));
+                }
+            }
+
+            collectFinish.add(newString);
+        }
+
+        domain.setGenerateDocument(collectFinish);
         domain.setField(field);
+    }
+
+    private void loadTemplatePath(JneratorDomain domain) {
+        if (Objects.nonNull(domain.getTemplateSelected()) && !domain.getTemplateSelected().isEmpty()) {
+
+            Optional<Map.Entry<String, String>> any = domain.getTemplateOptions().entrySet().stream()
+                    .filter(stringStringEntry -> stringStringEntry
+                            .getKey().contains(domain.getTemplateSelected())).findAny();
+
+            if (any.isPresent()) {
+                domain.setTemplatePath(any.get().getValue());
+            }
+        }
     }
 }

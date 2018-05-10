@@ -21,8 +21,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Controller to generate from a template.
@@ -45,6 +47,8 @@ public class JneratorController {
     @RequestMapping("/")
     public ModelAndView index(WebRequest webRequest) {
 
+        jneratorDomain = new JneratorDomain();
+
         methodDefault(webRequest);
 
         ModelAndView mv = new ModelAndView("index");
@@ -59,10 +63,13 @@ public class JneratorController {
 
         ModelAndView mv = new ModelAndView("index");
 
-        String path = jneratorDomain.getTemplatePath();
-        jneratorDomain
-                .setGenerateDocument(
-                        readTemplate.generateSqlTemplate(Paths.get(path), jneratorDomain.getMapAtributes()));
+        try{
+            String path = jneratorDomain.getTemplatePath();
+            jneratorDomain.setGenerateDocument(
+                    readTemplate.generateSqlTemplate(Paths.get(path), jneratorDomain));
+        }catch (Exception e){
+            logger.info(e.getMessage());
+        }
 
         mv.addObject("domain", jneratorDomain);
         return mv;
@@ -78,6 +85,14 @@ public class JneratorController {
         }
 
         jneratorDomain.setMapAtributes(parameterMap);
+        Map<String, String> templates = getTemplates();
+
+        jneratorDomain.setTemplateOptions(templates);
+        jneratorDomain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
+        readTemplate.loadSelectedTemplate(jneratorDomain);
+    }
+
+    private Map<String, String> getTemplates() {
         File[] files = new File("sql-templates").listFiles();
 
         Map<String, String> templates = new HashMap<>();
@@ -86,9 +101,11 @@ public class JneratorController {
             templates.put(file.getName(), file.getPath());
         }
 
-        jneratorDomain.setTemplateOptions(templates);
-        jneratorDomain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
-        readTemplate.loadSelectedTemplate(jneratorDomain);
+        templates = templates.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        return templates;
     }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
