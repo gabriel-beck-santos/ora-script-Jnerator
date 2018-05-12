@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,24 +34,24 @@ import java.util.stream.Collectors;
 @Controller
 public class JneratorController {
 
-    private final ReadTemplate readTemplate;
-    private JneratorDomain jneratorDomain;
+    private final ReadTemplate read;
+    private JneratorDomain domain;
     private Map<String, String[]> parameterMap;
     private Logger logger = LoggerFactory.getLogger(JneratorController.class);
 
     public JneratorController(ReadTemplate readTemplate) {
-        this.readTemplate = readTemplate;
+        this.read = readTemplate;
     }
 
     @RequestMapping("/")
     public ModelAndView index(WebRequest webRequest) {
 
-        jneratorDomain = new JneratorDomain();
+        domain = new JneratorDomain();
 
         methodDefault(webRequest);
 
         ModelAndView mv = new ModelAndView("index");
-        mv.addObject("domain", jneratorDomain);
+        mv.addObject("domain", domain);
         return mv;
     }
 
@@ -64,32 +63,30 @@ public class JneratorController {
         ModelAndView mv = new ModelAndView("index");
 
         try{
-            String path = jneratorDomain.getTemplatePath();
-            jneratorDomain.setGenerateDocument(
-                    readTemplate.generateSqlTemplate(Paths.get(path), jneratorDomain));
+            domain.setGenerateDocument(read.generateSqlTemplate(domain));
         }catch (Exception e){
             logger.info(e.getMessage());
         }
 
-        mv.addObject("domain", jneratorDomain);
+        mv.addObject("domain", domain);
         return mv;
     }
 
     private void methodDefault(WebRequest webRequest) {
-        if (Objects.isNull(jneratorDomain)) {
-            jneratorDomain = new JneratorDomain();
+        if (Objects.isNull(domain)) {
+            domain = new JneratorDomain();
         }
 
         if (webRequest.getParameterMap().values().stream().anyMatch(strings -> strings.length > 0)) {
             parameterMap = webRequest.getParameterMap();
         }
 
-        jneratorDomain.setMapAtributes(parameterMap);
+        domain.setMapAtributes(parameterMap);
         Map<String, String> templates = getTemplates();
 
-        jneratorDomain.setTemplateOptions(templates);
-        jneratorDomain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
-        readTemplate.loadSelectedTemplate(jneratorDomain);
+        domain.setTemplateOptions(templates);
+        domain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
+        read.loadSelectedTemplate(domain);
     }
 
     private Map<String, String> getTemplates() {
@@ -116,7 +113,7 @@ public class JneratorController {
             File temp = File.createTempFile("OWNER_TABLE", ".sql");
             temp.deleteOnExit();
 
-            Files.write(temp.toPath(), jneratorDomain.getGenerateDocument(), Charset.forName("UTF-8"));
+            Files.write(temp.toPath(), domain.getGenerateDocument(), Charset.forName("UTF-8"));
 
             HttpHeaders header = new HttpHeaders();
             header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "OWNER_TABLE.sql");
