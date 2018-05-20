@@ -60,10 +60,6 @@ public class KeyValue<K, V> implements Map.Entry<K, V> {
         return this.value;
     }
 
-    public K setKey(K key) {
-        return this.key = key;
-    }
-
     public V setValue(V value) {
         return this.value = value;
     }
@@ -80,16 +76,8 @@ public class KeyValue<K, V> implements Map.Entry<K, V> {
         return help;
     }
 
-    public void setHelp(String help) {
-        this.help = help;
-    }
-
     public String getSize() {
         return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 
     public String getType() {

@@ -17,8 +17,10 @@
         </ol>
     </nav>
 
+    <button type="button" class="btn btn-primary" data-toggle="modal"
+            data-target="#addTemplate" data-whatever="@mdo">Add</button>
     <div class="alert">
-        <table class="table table-hover ">
+        <table class="table table-hover table-striped table-sm">
             <thead class="thead-inverse">
             <tr>
                 <th>Template</th>
@@ -27,10 +29,16 @@
             </thead>
             <tr th:each="template : ${domain.templateOptionsList}">
                 <td th:text="${template}"></td>
-                <td><a href="#" th:href="@{'/remove-template/' + ${template}}">Delete</a></td>
+                <form action="#" th:action="@{/remove-template}" method="post">
+                    <input type="hidden" id="template" name="template" th:value="${template}">
+                    <td><button type="submit" class="btn btn-danger btn-sm" >Delete</button></td>
+                </form>
             </tr>
         </table>
     </div>
+
+    <div th:replace="template/template">&nbsp;</div>
+
 </div>
 </body>
 </html>

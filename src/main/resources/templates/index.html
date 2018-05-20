@@ -5,6 +5,7 @@
     <title>Jnerator</title>
 
     <link href="/css/index-template.css" rel="stylesheet"/>
+    <script src="/js/index-template.js"></script>
 </head>
 <body>
 
@@ -29,8 +30,8 @@
         <div class="col-sm-5">
 
             <div th:if="${domain.templatePath != null && !domain.templatePath.isEmpty()}">
-                <form action="#" th:action="@{/generate}" th:object="${domain.field}" name="myForm"
-                        method="post">
+                <form action="#" th:action="@{/generate}" th:object="${domain.field}" name="formFilds"
+                      id="formFilds" method="post">
 
                     <div class="alert alert-primary">
                         <div class="form-group" th:each="field: ${domain.field?.keyValues}">
@@ -49,8 +50,8 @@
                     </div>
 
                     <div class="alert alert-primary">
-                        <input class="btn btn-primary btn-sm" type="submit" value="Generator"/>
-                        <!--<input class="btn btn-secondary btn-sm" type="reset" value="Reset"/>-->
+                        <button type="submit" class="btn btn-primary btn-sm" >Generator</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="resetForm()">Reset</button>
                         <a class="btn btn-dark float-right btn-sm" th:href="@{/download}">Download</a>
                     </div>
 

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -32,18 +31,17 @@ public class ReadTemplate {
     /**
      * Method for generating a template in sql.
      *
-     * @param path      path receives a parameter containing a PATH.
      * @param domain    receives an attribute.
      * @return the list of string.
      */
-    public List<String> generateSqlTemplate(Path path, JneratorDomain domain) {
+    public List<String> generateSqlTemplate(JneratorDomain domain) {
 
         Map<String, String[]> atributes = domain.getMapAtributes();
         List<String> collect2 = new ArrayList<>();
 
         try {
 
-            Stream<String> lines = Files.lines(path);
+            Stream<String> lines = Files.lines(Paths.get(domain.getTemplatePath()));
             List<String> collect = lines.collect(Collectors.toList());
 
             for (String line : collect) {
@@ -69,7 +67,7 @@ public class ReadTemplate {
 
             lines.close();
         } catch (IOException e) {
-            logger.info("Anything to generate.");
+            logger.info("Anything to generate. Detail: " + e.getMessage());
         }
         return collect2;
     }

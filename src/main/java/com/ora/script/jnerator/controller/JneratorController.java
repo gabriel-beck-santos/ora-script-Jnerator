@@ -1,6 +1,7 @@
 package com.ora.script.jnerator.controller;
 
 import com.ora.script.jnerator.domain.JneratorDomain;
+import com.ora.script.jnerator.processor.FileUtil;
 import com.ora.script.jnerator.processor.ReadTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Controller to generate from a template.
@@ -35,24 +32,24 @@ import java.util.stream.Collectors;
 @Controller
 public class JneratorController {
 
-    private final ReadTemplate readTemplate;
-    private JneratorDomain jneratorDomain;
+    private final ReadTemplate read;
+    private JneratorDomain domain;
     private Map<String, String[]> parameterMap;
     private Logger logger = LoggerFactory.getLogger(JneratorController.class);
 
     public JneratorController(ReadTemplate readTemplate) {
-        this.readTemplate = readTemplate;
+        this.read = readTemplate;
     }
 
     @RequestMapping("/")
     public ModelAndView index(WebRequest webRequest) {
 
-        jneratorDomain = new JneratorDomain();
+        domain = new JneratorDomain();
 
         methodDefault(webRequest);
 
         ModelAndView mv = new ModelAndView("index");
-        mv.addObject("domain", jneratorDomain);
+        mv.addObject("domain", domain);
         return mv;
     }
 
@@ -64,48 +61,30 @@ public class JneratorController {
         ModelAndView mv = new ModelAndView("index");
 
         try{
-            String path = jneratorDomain.getTemplatePath();
-            jneratorDomain.setGenerateDocument(
-                    readTemplate.generateSqlTemplate(Paths.get(path), jneratorDomain));
+            domain.setGenerateDocument(read.generateSqlTemplate(domain));
         }catch (Exception e){
             logger.info(e.getMessage());
         }
 
-        mv.addObject("domain", jneratorDomain);
+        mv.addObject("domain", domain);
         return mv;
     }
 
     private void methodDefault(WebRequest webRequest) {
-        if (Objects.isNull(jneratorDomain)) {
-            jneratorDomain = new JneratorDomain();
+        if (Objects.isNull(domain)) {
+            domain = new JneratorDomain();
         }
 
         if (webRequest.getParameterMap().values().stream().anyMatch(strings -> strings.length > 0)) {
             parameterMap = webRequest.getParameterMap();
         }
 
-        jneratorDomain.setMapAtributes(parameterMap);
-        Map<String, String> templates = getTemplates();
+        domain.setMapAtributes(parameterMap);
+        Map<String, String> templates = FileUtil.getFiles();
 
-        jneratorDomain.setTemplateOptions(templates);
-        jneratorDomain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
-        readTemplate.loadSelectedTemplate(jneratorDomain);
-    }
-
-    private Map<String, String> getTemplates() {
-        File[] files = new File("sql-templates").listFiles();
-
-        Map<String, String> templates = new HashMap<>();
-
-        for (File file : Objects.requireNonNull(files)) {
-            templates.put(file.getName(), file.getPath());
-        }
-
-        templates = templates.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        return templates;
+        domain.setTemplateOptions(templates);
+        domain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
+        read.loadSelectedTemplate(domain);
     }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -116,7 +95,7 @@ public class JneratorController {
             File temp = File.createTempFile("OWNER_TABLE", ".sql");
             temp.deleteOnExit();
 
-            Files.write(temp.toPath(), jneratorDomain.getGenerateDocument(), Charset.forName("UTF-8"));
+            Files.write(temp.toPath(), domain.getGenerateDocument(), Charset.forName("UTF-8"));
 
             HttpHeaders header = new HttpHeaders();
             header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "OWNER_TABLE.sql");
