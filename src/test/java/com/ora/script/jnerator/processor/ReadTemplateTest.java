@@ -34,7 +34,7 @@ public class ReadTemplateTest {
         map.put("attr2", new String[]{"value2"});
 
         when(domain.getMapAtributes()).thenReturn(map);
-        when(domain.getTemplatePath()).thenReturn("sql-templates/TEMPLATE-ARQ_ADD-COLUMN.sql");
+        when(domain.getTemplatePath()).thenReturn("sql-templates/DDL/ALTER/ADD-COLUMN.sql");
 
         List<String> strings = readTemplate.generateSqlTemplate(domain);
 

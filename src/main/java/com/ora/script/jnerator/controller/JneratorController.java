@@ -1,6 +1,7 @@
 package com.ora.script.jnerator.controller;
 
 import com.ora.script.jnerator.domain.JneratorDomain;
+import com.ora.script.jnerator.processor.FileUtil;
 import com.ora.script.jnerator.processor.ReadTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Controller to generate from a template.
@@ -82,27 +80,11 @@ public class JneratorController {
         }
 
         domain.setMapAtributes(parameterMap);
-        Map<String, String> templates = getTemplates();
+        Map<String, String> templates = FileUtil.getFiles();
 
         domain.setTemplateOptions(templates);
         domain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
         read.loadSelectedTemplate(domain);
-    }
-
-    private Map<String, String> getTemplates() {
-        File[] files = new File("sql-templates").listFiles();
-
-        Map<String, String> templates = new HashMap<>();
-
-        for (File file : Objects.requireNonNull(files)) {
-            templates.put(file.getName(), file.getPath());
-        }
-
-        templates = templates.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        return templates;
     }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

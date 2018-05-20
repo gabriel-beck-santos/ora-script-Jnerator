@@ -1,14 +1,13 @@
 package com.ora.script.jnerator.controller;
 
 import com.ora.script.jnerator.domain.JneratorDomain;
+import com.ora.script.jnerator.domain.TemplateDomain;
+import com.ora.script.jnerator.processor.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
@@ -16,9 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Controller to maintain the template.
@@ -31,49 +28,42 @@ public class TemplateController {
 
     private Logger logger = LoggerFactory.getLogger(TemplateController.class);
 
-    @GetMapping("/remove-template/{template}")
-    public String removeTemplate(@PathVariable String template) {
-        File file = new File("sql-templates/" + template);
+    @PostMapping("/remove-template")
+    public String removeTemplate(TemplateDomain templateDomain) {
+        File file = new File("sql-templates/" + templateDomain.getTemplate() );
 
         if (!file.delete()) {
-            logger.info("Template " + template + " não removido!");
+            logger.info("Template " + templateDomain.getTemplate() + " não removido!");
         }
         return "redirect:/list-template";
     }
 
     @GetMapping("/list-template")
-    public ModelAndView removeTemplate() {
+    public ModelAndView listTemplate(TemplateDomain templateDomain) {
 
         JneratorDomain domain = new JneratorDomain();
         ModelAndView modelAndView = new ModelAndView("template/list-template");
-        File[] files = new File("sql-templates").listFiles();
-
-        Map<String, String> templates = new HashMap<>();
-
-        for (File file : Objects.requireNonNull(files)) {
-            templates.put(file.getName(), file.getPath());
-        }
+        Map<String, String> templates = FileUtil.getFiles();
 
         domain.setTemplateOptions(templates);
         domain.setTemplateOptionsList(new ArrayList<>(templates.keySet()));
 
         modelAndView.addObject("domain", domain);
+        modelAndView.addObject("templateDomain", templateDomain);
+
         return modelAndView;
     }
 
-    @GetMapping("/template")
-    public ModelAndView templateUpload() {
-        return new ModelAndView("template/template");
-    }
-
     @PostMapping("/template")
-    public String submitTemplate(@RequestParam("fileTemplate") MultipartFile file) {
+    public String submitTemplate(TemplateDomain templateDomain) {
 
-        String orgName = file.getOriginalFilename();
-        String filePath = "sql-templates/" + orgName;
+        String orgName = templateDomain.getFileTemplate().getOriginalFilename();
+        String directory = "sql-templates/"+ templateDomain.getCommandSelect() + "/";
+        String filePath = directory + orgName;
 
         try {
-            Files.write(Paths.get(filePath), file.getBytes());
+            FileUtil.createDir(directory);
+            Files.write(Paths.get(filePath), templateDomain.getFileTemplate().getBytes());
         } catch (IOException e) {
             logger.info(e.getMessage());
         }
